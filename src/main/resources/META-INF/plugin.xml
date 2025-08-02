@@ -23,6 +23,11 @@
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-
+        <fileType
+                name="Carbon"
+                implementationClass="cb.CbFileType"
+                fieldName="INSTANCE"
+                language="Carbon"
+                extensions="carbon"/>
     </extensions>
 </idea-plugin>
