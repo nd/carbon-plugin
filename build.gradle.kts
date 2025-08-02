@@ -24,6 +24,8 @@ dependencies {
         // Add necessary plugin dependencies for compilation here, example:
         // bundledPlugin("com.intellij.java")
     }
+
+    testImplementation("junit:junit:4.13.2")
 }
 
 intellijPlatform {
