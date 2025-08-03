@@ -28,4 +28,8 @@ class CbLexerTest : LexerTestCase() {
   fun testSpaces() {
     doTest()
   }
+
+  fun testComments() {
+    doTest()
+  }
 }

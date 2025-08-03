@@ -83,6 +83,10 @@ public class CbLexer extends LexerBase {
         readToken1(CbToken.NEWLINE);
         break;
 
+      case '/':
+        readCommentOrDiv();
+        break;
+
       default: {
         myTokenStart = myOffset;
         myToken = TokenType.BAD_CHARACTER;
@@ -171,6 +175,21 @@ public class CbLexer extends LexerBase {
       } else {
         break;
       }
+    }
+    myTokenEnd = myOffset;
+  }
+
+  private void readCommentOrDiv() {
+    myTokenStart = myOffset;
+    if (myOffset + 1 < myEndOffset && myBuffer.charAt(myOffset + 1) == '/') {
+      myToken = CbToken.COMMENT;
+      myOffset += 2;
+      while (myOffset < myEndOffset && myBuffer.charAt(myOffset) != '\n') {
+        myOffset++;
+      }
+    } else {
+      myToken = TokenType.BAD_CHARACTER;
+      myOffset++;
     }
     myTokenEnd = myOffset;
   }
