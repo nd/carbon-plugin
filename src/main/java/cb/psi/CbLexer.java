@@ -74,6 +74,15 @@ public class CbLexer extends LexerBase {
         readNumber();
         break;
 
+      case ' ':
+      case '\t':
+        readWhitespace();
+        break;
+
+      case '\n':
+        readToken1(CbToken.NEWLINE);
+        break;
+
       default: {
         myTokenStart = myOffset;
         myToken = TokenType.BAD_CHARACTER;
@@ -148,6 +157,28 @@ public class CbLexer extends LexerBase {
         }
       }
     }
+    myTokenEnd = myOffset;
+  }
+
+  private void readWhitespace() {
+    myToken = CbToken.WHITESPACE;
+    myTokenStart = myOffset;
+    myOffset++;
+    while (myOffset < myEndOffset) {
+      char c = myBuffer.charAt(myOffset);
+      if (c == ' ' || c == '\t') {
+        myOffset++;
+      } else {
+        break;
+      }
+    }
+    myTokenEnd = myOffset;
+  }
+
+  private void readToken1(@NotNull CbToken token) {
+    myToken = token;
+    myTokenStart = myOffset;
+    myOffset++;
     myTokenEnd = myOffset;
   }
 

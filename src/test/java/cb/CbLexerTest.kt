@@ -24,4 +24,8 @@ class CbLexerTest : LexerTestCase() {
   fun testNumbers() {
     doTest()
   }
+
+  fun testSpaces() {
+    doTest()
+  }
 }
