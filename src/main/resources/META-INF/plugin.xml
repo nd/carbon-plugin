@@ -13,7 +13,7 @@
     <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/best-practices-for-listing.html#plugin-description -->
     <description><![CDATA[
-        Carbon language support
+        Adds support for Carbon programming language.
     ]]></description>
 
     <!-- Product and plugin compatibility requirements.
