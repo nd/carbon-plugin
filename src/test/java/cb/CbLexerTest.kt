@@ -32,4 +32,8 @@ class CbLexerTest : LexerTestCase() {
   fun testComments() {
     doTest()
   }
+
+  fun testSymbolic() {
+    doTest()
+  }
 }

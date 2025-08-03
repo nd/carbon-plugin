@@ -50,7 +50,6 @@ public class CbLexer extends LexerBase {
     myEndOffset = endOffset;
     myState = initialState;
     advance();
-
   }
 
   @Override
@@ -61,39 +60,34 @@ public class CbLexer extends LexerBase {
     }
     char c = myBuffer.charAt(myOffset);
     switch (c) {
-      case '0':
-      case '1':
-      case '2':
-      case '3':
-      case '4':
-      case '5':
-      case '6':
-      case '7':
-      case '8':
-      case '9':
-        readNumber();
-        break;
-
-      case ' ':
-      case '\t':
-        readWhitespace();
-        break;
-
-      case '\n':
-        readToken1(CbToken.NEWLINE);
-        break;
-
-      case '/':
-        readCommentOrDiv();
-        break;
-
-      default: {
-        myTokenStart = myOffset;
-        myToken = TokenType.BAD_CHARACTER;
-        myOffset++;
-        myTokenEnd = myOffset;
-      }
-      break;
+      case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> readNumber();
+      case ' ', '\t' -> readWhitespace();
+      case '\n' -> readToken(CbToken.NEWLINE);
+      case '/' -> readCommentOrSlash();
+      case '.' -> readToken(CbToken.PERIOD);
+      case '(' -> readToken(CbToken.OPEN_PAREN);
+      case ')' -> readToken(CbToken.CLOSE_PAREN);
+      case '[' -> readToken(CbToken.OPEN_BRACKET);
+      case ']' -> readToken(CbToken.CLOSE_BRACKET);
+      case '{' -> readToken(CbToken.OPEN_BRACE);
+      case '}' -> readToken(CbToken.CLOSE_BRACE);
+      case ';' -> readToken(CbToken.SEMI);
+      case ',' -> readToken(CbToken.COMMA);
+      case '?' -> readToken(CbToken.QUESTION);
+      case '%' -> readTokenEq(CbToken.PERCENT, CbToken.PERCENT_EQ);
+      case '&' -> readTokenEq(CbToken.AMP, CbToken.AMP_EQ);
+      case '^' -> readTokenEq(CbToken.CARET, CbToken.CARET_EQ);
+      case '*' -> readTokenEq(CbToken.STAR, CbToken.STAR_EQ);
+      case '~' -> readTokenEq(CbToken.TILDE, CbToken.TILDE_EQ);
+      case '|' -> readTokenEq(CbToken.PIPE, CbToken.PIPE_EQ);
+      case '!' -> readTokenEq(CbToken.EXCL, CbToken.EXCL_EQ);
+      case '+' -> readTokenEq(CbToken.PLUS, CbToken.PLUS_EQ, '+', CbToken.PLUS_PLUS);
+      case ':' -> readTokenEq(CbToken.COLON, CbToken.COLON_EQ, '!', CbToken.COLON_EXCL);
+      case '=' -> readTokenEq(CbToken.EQ, CbToken.EQ_EQ, '>', CbToken.EQ_GREATER);
+      case '-' -> readMinus();
+      case '>' -> readGreater();
+      case '<' -> readLess();
+      default -> readToken(TokenType.BAD_CHARACTER);
     }
   }
 
@@ -179,7 +173,7 @@ public class CbLexer extends LexerBase {
     myTokenEnd = myOffset;
   }
 
-  private void readCommentOrDiv() {
+  private void readCommentOrSlash() {
     myTokenStart = myOffset;
     if (myOffset + 1 < myEndOffset && myBuffer.charAt(myOffset + 1) == '/') {
       myToken = CbToken.COMMENT;
@@ -187,17 +181,130 @@ public class CbLexer extends LexerBase {
       while (myOffset < myEndOffset && myBuffer.charAt(myOffset) != '\n') {
         myOffset++;
       }
+      myTokenEnd = myOffset;
     } else {
-      myToken = TokenType.BAD_CHARACTER;
-      myOffset++;
+      readTokenEq(CbToken.SLASH, CbToken.SLASH_EQ);
     }
-    myTokenEnd = myOffset;
   }
 
-  private void readToken1(@NotNull CbToken token) {
+  private void readToken(@NotNull IElementType token) {
     myToken = token;
     myTokenStart = myOffset;
     myOffset++;
+    myTokenEnd = myOffset;
+  }
+
+  private void readTokenEq(@NotNull CbToken token0, @NotNull CbToken token1) {
+    myTokenStart = myOffset;
+    myToken = token0;
+    int length = 1;
+    if (myOffset + 1 < myEndOffset && myBuffer.charAt(myOffset + 1) == '=') {
+      myToken = token1;
+      length = 2;
+    }
+    myOffset += length;
+    myTokenEnd = myOffset;
+  }
+
+  private void readTokenEq(
+          @NotNull CbToken token1,
+          @NotNull CbToken tokenEq,
+          char next, @NotNull CbToken token2) {
+    myTokenStart = myOffset;
+    myToken = token1;
+    int length = 1;
+    if (myOffset + 1 < myEndOffset) {
+      char c = myBuffer.charAt(myOffset + 1);
+      if (c == '=') {
+        myToken = tokenEq;
+        length = 2;
+      } else if (c == next) {
+        myToken = token2;
+        length = 2;
+      }
+    }
+    myOffset += length;
+    myTokenEnd = myOffset;
+  }
+
+  private void readMinus() {
+    myTokenStart = myOffset;
+    myToken = CbToken.MINUS;
+    int length = 1;
+    if (myOffset + 1 < myEndOffset) {
+      char c = myBuffer.charAt(myOffset + 1);
+      if (c == '-') {
+        myToken = CbToken.MINUS_MINUS;
+        length = 2;
+      } else if (c == '>') {
+        myToken = CbToken.MINUS_GREATER;
+        length = 2;
+      } else if (c == '=') {
+        myToken = CbToken.MINUS_EQ;
+        length = 2;
+      }
+    }
+    myOffset += length;
+    myTokenEnd = myOffset;
+  }
+
+  private void readGreater() {
+    // >
+    // >=
+    // >>
+    // >>=
+    myTokenStart = myOffset;
+    myToken = CbToken.GREATER;
+    int length = 1;
+    if (myOffset + 1 < myEndOffset) {
+      char c = myBuffer.charAt(myOffset + 1);
+      if (c == '=') {
+        myToken = CbToken.GREATER_EQ;
+        length = 2;
+      } else if (c == '>') {
+        myToken = CbToken.GREATER_GREATER;
+        length = 2;
+        if (myOffset + 2 < myEndOffset && myBuffer.charAt(myOffset + 2) == '=') {
+          myToken = CbToken.GREATER_GREATER_EQ;
+          length = 3;
+        }
+      }
+    }
+    myOffset += length;
+    myTokenEnd = myOffset;
+  }
+
+  private void readLess() {
+    // <
+    // <=
+    // <>
+    // <-
+    // <<
+    // <<=
+    myTokenStart = myOffset;
+    myToken = CbToken.LESS;
+    int length = 1;
+    if (myOffset + 1 < myEndOffset) {
+      char c = myBuffer.charAt(myOffset + 1);
+      if (c == '=') {
+        myToken = CbToken.LESS_EQ;
+        length = 2;
+      } else if (c == '>') {
+        myToken = CbToken.LESS_GREATER;
+        length = 2;
+      } else if (c == '-') {
+        myToken = CbToken.LESS_MINUS;
+        length = 2;
+      } else if (c == '<') {
+        myToken = CbToken.LESS_LESS;
+        length = 2;
+        if (myOffset + 2 < myEndOffset && myBuffer.charAt(myOffset + 2) == '=') {
+          myToken = CbToken.LESS_LESS_EQ;
+          length = 3;
+        }
+      }
+    }
+    myOffset += length;
     myTokenEnd = myOffset;
   }
 
