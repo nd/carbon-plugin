@@ -117,7 +117,7 @@ public class CbLexer extends LexerBase {
 
     while (myOffset < myEndOffset) {
       c = myBuffer.charAt(myOffset);
-      if (valid[c & 0xff]) {
+      if (isValidNumberSymbol(valid, c)) {
         myOffset++;
       } else {
         break;
@@ -126,11 +126,11 @@ public class CbLexer extends LexerBase {
 
     if (allowReal && myOffset + 1 < myEndOffset) {
       c = myBuffer.charAt(myOffset);
-      if (c == '.' && valid[myBuffer.charAt(myOffset + 1) & 0xff]) {
+      if (c == '.' && isValidNumberSymbol(valid, myBuffer.charAt(myOffset + 1))) {
         myOffset += 2;
         while (myOffset < myEndOffset) {
           c = myBuffer.charAt(myOffset);
-          if (valid[c & 0xff]) {
+          if (isValidNumberSymbol(valid, c)) {
             myOffset++;
           } else {
             break;
@@ -146,7 +146,7 @@ public class CbLexer extends LexerBase {
           valid = validDec;
           while (myOffset < myEndOffset) {
             c = myBuffer.charAt(myOffset);
-            if (valid[c & 0xff]) {
+            if (isValidNumberSymbol(valid, c)) {
               myOffset++;
             } else {
               break;
@@ -156,6 +156,10 @@ public class CbLexer extends LexerBase {
       }
     }
     myTokenEnd = myOffset;
+  }
+
+  private static boolean isValidNumberSymbol(boolean[] validArray, char c) {
+    return c < validArray.length && validArray[c];
   }
 
   private void readWhitespace() {
