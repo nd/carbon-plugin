@@ -1,5 +1,6 @@
 package cb
 
+import java.nio.file.Path
 import cb.psi.CbLexer
 import com.intellij.lexer.Lexer
 import com.intellij.testFramework.LexerTestCase
@@ -14,7 +15,8 @@ class CbLexerTest : LexerTestCase() {
   }
 
   override fun getPathToTestDataFile(extension: String): String {
-    return dirPath + "/" + getTestName(true) + extension
+    val relativePath = dirPath + "/" + getTestName(true) + extension
+    return Path.of(relativePath).toAbsolutePath().toString()
   }
 
   fun doTest() {
