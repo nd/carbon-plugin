@@ -3,7 +3,7 @@ package cb.psi
 import cb.CbLanguage
 import com.intellij.psi.tree.IElementType
 
-class CbToken(debugName: String) : IElementType(debugName, CbLanguage) {
+class CbToken(val name: String) : IElementType(name, CbLanguage) {
   companion object {
     @JvmField val WHITESPACE = CbToken("whitespace")
     @JvmField val NEWLINE = CbToken("newline")
@@ -59,5 +59,71 @@ class CbToken(debugName: String) : IElementType(debugName, CbLanguage) {
     @JvmField val CLOSE_PAREN = CbToken("CLOSE_PAREN")
     @JvmField val OPEN_BRACE = CbToken("OPEN_BRACE")
     @JvmField val CLOSE_BRACE = CbToken("CLOSE_BRACE")
+
+    @JvmField val IDENTIFIER = CbToken("IDENTIFIER")
+    @JvmField val ABSTRACT = CbToken("abstract")
+    @JvmField val ADAPT = CbToken("adapt")
+    @JvmField val ADDR = CbToken("addr")
+    @JvmField val ALIAS = CbToken("alias")
+    @JvmField val AND = CbToken("and")
+    @JvmField val AS = CbToken("as")
+    @JvmField val AUTO = CbToken("auto")
+    @JvmField val BASE = CbToken("base")
+    @JvmField val BREAK = CbToken("break")
+    @JvmField val CORE = CbToken("Core")
+    @JvmField val CASE = CbToken("case")
+    @JvmField val CHOICE = CbToken("choice")
+    @JvmField val CLASS = CbToken("class")
+    @JvmField val CONSTRAINT = CbToken("constraint")
+    @JvmField val CONTINUE = CbToken("continue")
+    @JvmField val DEFAULT = CbToken("default")
+    @JvmField val DESTROY = CbToken("destroy")
+    @JvmField val ELSE = CbToken("else")
+    @JvmField val EXPORT = CbToken("export")
+    @JvmField val EXTEND = CbToken("extend")
+    @JvmField val FINAL = CbToken("final")
+    @JvmField val FN = CbToken("fn")
+    @JvmField val FOR = CbToken("for")
+    @JvmField val FORALL = CbToken("forall")
+    @JvmField val FRIEND = CbToken("friend")
+    @JvmField val IF = CbToken("if")
+    @JvmField val IMPL = CbToken("impl")
+    @JvmField val IMPLS = CbToken("impls")
+    @JvmField val IMPORT = CbToken("import")
+    @JvmField val IN = CbToken("in")
+    @JvmField val INTERFACE = CbToken("interface")
+    @JvmField val LET = CbToken("let")
+    @JvmField val LIBRARY = CbToken("library")
+    @JvmField val LIKE = CbToken("like")
+    @JvmField val MATCH = CbToken("match")
+    @JvmField val NAMESPACE = CbToken("namespace")
+    @JvmField val NOT = CbToken("not")
+    @JvmField val OBSERVE = CbToken("observe")
+    @JvmField val OR = CbToken("or")
+    @JvmField val OVERRIDE = CbToken("override")
+    @JvmField val PACKAGE = CbToken("package")
+    @JvmField val PARTIAL = CbToken("partial")
+    @JvmField val PRIVATE = CbToken("private")
+    @JvmField val PROTECTED = CbToken("protected")
+    @JvmField val REQUIRE = CbToken("require")
+    @JvmField val RETURN = CbToken("return")
+    @JvmField val RETURNED = CbToken("returned")
+    @JvmField val SELF = CbToken("self")
+    @JvmField val SELF_TYPE = CbToken("Self")
+    @JvmField val TEMPLATE = CbToken("template")
+    @JvmField val THEN = CbToken("then")
+    @JvmField val TYPE = CbToken("type")
+    @JvmField val VAR = CbToken("var")
+    @JvmField val VIRTUAL = CbToken("virtual")
+    @JvmField val WHERE = CbToken("where")
+    @JvmField val WHILE = CbToken("while")
+
+    @JvmField
+    val keywords = arrayOf<CbToken>(
+      ABSTRACT, ADAPT, ADDR, ALIAS, AND, AS, AUTO, BASE, BREAK, CORE, CASE, CHOICE, CLASS, CONSTRAINT, CONTINUE, DEFAULT,
+      DESTROY, ELSE, EXPORT, EXTEND, FINAL, FN, FOR, FORALL, FRIEND, IF, IMPL, IMPLS, IMPORT, IN, INTERFACE, LET, LIBRARY,
+      LIKE, MATCH, NAMESPACE, NOT, OBSERVE, OR, OVERRIDE, PACKAGE, PARTIAL, PRIVATE, PROTECTED, REQUIRE, RETURN, RETURNED,
+      SELF, SELF_TYPE, TEMPLATE, THEN, TYPE, VAR, VIRTUAL, WHERE, WHILE,
+    )
   }
 }

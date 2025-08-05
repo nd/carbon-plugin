@@ -38,4 +38,8 @@ class CbLexerTest : LexerTestCase() {
   fun testSymbolic() {
     doTest()
   }
+
+  fun testWords() {
+    doTest()
+  }
 }

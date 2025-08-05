@@ -12,11 +12,19 @@ public class CbLexer extends LexerBase {
   private static final boolean[] validBin = new boolean[256];
   private static final boolean[] validDec = new boolean[256];
   private static final boolean[] validHex = new boolean[256];
+  private static final boolean[] validWordStart = new boolean[256];
+  private static final boolean[] validWordMiddle = new boolean[256];
+
+  private static final long initialHash = -3750763034362895579L;
+  private static final long[] keywordHashes = new long[256];
+  private static final CbToken[] keywords = new CbToken[256];
 
   static {
     validBin['_'] = true;
     validDec['_'] = true;
     validHex['_'] = true;
+    validWordStart['_'] = true;
+    validWordMiddle['_'] = true;
 
     for (int i = '0'; i <= '1'; i++) {
       validBin[i] = true;
@@ -25,10 +33,24 @@ public class CbLexer extends LexerBase {
     for (int i = '0'; i <= '9'; i++) {
       validDec[i] = true;
       validHex[i] = true;
+      validWordMiddle[i] = true;
     }
 
     for (int i = 'A'; i <= 'F'; i++) {
       validHex[i] = true;
+    }
+
+    for (int i = 'a'; i <= 'z'; i++) {
+      validWordStart[i] = true;
+      validWordMiddle[i] = true;
+    }
+    for (int i = 'A'; i <= 'Z'; i++) {
+      validWordStart[i] = true;
+      validWordMiddle[i] = true;
+    }
+
+    for (CbToken keyword : CbToken.keywords) {
+      hashKeyword(keyword);
     }
   }
 
@@ -87,7 +109,11 @@ public class CbLexer extends LexerBase {
       case '-' -> readMinus();
       case '>' -> readGreater();
       case '<' -> readLess();
-      default -> readToken(TokenType.BAD_CHARACTER);
+      default -> {
+        if (!readWord()) {
+          readToken(TokenType.BAD_CHARACTER);
+        }
+      }
     }
   }
 
@@ -117,7 +143,7 @@ public class CbLexer extends LexerBase {
 
     while (myOffset < myEndOffset) {
       c = myBuffer.charAt(myOffset);
-      if (isValidNumberSymbol(valid, c)) {
+      if (isValid(valid, c)) {
         myOffset++;
       } else {
         break;
@@ -126,11 +152,11 @@ public class CbLexer extends LexerBase {
 
     if (allowReal && myOffset + 1 < myEndOffset) {
       c = myBuffer.charAt(myOffset);
-      if (c == '.' && isValidNumberSymbol(valid, myBuffer.charAt(myOffset + 1))) {
+      if (c == '.' && isValid(valid, myBuffer.charAt(myOffset + 1))) {
         myOffset += 2;
         while (myOffset < myEndOffset) {
           c = myBuffer.charAt(myOffset);
-          if (isValidNumberSymbol(valid, c)) {
+          if (isValid(valid, c)) {
             myOffset++;
           } else {
             break;
@@ -146,7 +172,7 @@ public class CbLexer extends LexerBase {
           valid = validDec;
           while (myOffset < myEndOffset) {
             c = myBuffer.charAt(myOffset);
-            if (isValidNumberSymbol(valid, c)) {
+            if (isValid(valid, c)) {
               myOffset++;
             } else {
               break;
@@ -158,7 +184,7 @@ public class CbLexer extends LexerBase {
     myTokenEnd = myOffset;
   }
 
-  private static boolean isValidNumberSymbol(boolean[] validArray, char c) {
+  private static boolean isValid(boolean[] validArray, char c) {
     return c < validArray.length && validArray[c];
   }
 
@@ -312,6 +338,30 @@ public class CbLexer extends LexerBase {
     myTokenEnd = myOffset;
   }
 
+  private boolean readWord() {
+    char c = myBuffer.charAt(myOffset);
+    if (!isValid(validWordStart, c)) {
+      return false;
+    }
+    myTokenStart = myOffset;
+    myOffset++;
+    long hash = hashChar(initialHash, c);
+    while (myOffset < myEndOffset) {
+      c = myBuffer.charAt(myOffset);
+      if (!isValid(validWordMiddle, c)) {
+        break;
+      }
+      hash = hashChar(hash, c);
+      myOffset++;
+    }
+    myToken = getKeyword(hash, myTokenStart, myOffset);
+    if (myToken == null) {
+      myToken = CbToken.IDENTIFIER;
+    }
+    myTokenEnd = myOffset;
+    return true;
+  }
+
   @Override
   public @Nullable IElementType getTokenType() {
     return myToken;
@@ -340,5 +390,58 @@ public class CbLexer extends LexerBase {
   @Override
   public int getState() {
     return myState;
+  }
+
+
+  private static int getKeywordIndex(long hash) {
+    // This happens to produce a unique index for all keywords.
+    // If keywords are changed this needs to be updated (hashKeyword will throw).
+    return (int) ((hash >> 4) & 0xff);
+  }
+
+  private static long hashChar(long hash, char c) {
+    long result = hash ^ c;
+    result *= 104693;
+    return result;
+  }
+
+  private static long hashString(String s) {
+    long result = initialHash;
+    for (int i = 0; i < s.length(); i++) {
+      result = hashChar(result, s.charAt(i));
+    }
+    return result;
+  }
+
+  private static void hashKeyword(CbToken keyword) {
+    long hash = hashString(keyword.getName());
+    int index = getKeywordIndex(hash);
+    if (keywordHashes[index] != 0 || keywords[index] != null) {
+      throw new IllegalStateException("Hash doesn't produce unique index for all keywords");
+    }
+    keywordHashes[index] = hash;
+    keywords[index] = keyword;
+  }
+
+  private @Nullable CbToken getKeyword(long hash, int startOffset, int endOffset) {
+    int index = getKeywordIndex(hash);
+    if (keywordHashes[index] != hash) {
+      return null;
+    }
+    CbToken keyword = keywords[index];
+    if (keyword == null) {
+      return null;
+    }
+    int length = endOffset - startOffset;
+    String keywordString = keyword.getName();
+    if (keywordString.length() != length) {
+      return null;
+    }
+    for (int i = 0; i < length; i++) {
+      if (keywordString.charAt(i) != myBuffer.charAt(startOffset + i)) {
+        return null;
+      }
+    }
+    return keyword;
   }
 }
