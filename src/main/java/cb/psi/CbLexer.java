@@ -346,20 +346,44 @@ public class CbLexer extends LexerBase {
     myTokenStart = myOffset;
     myOffset++;
     long hash = hashChar(initialHash, c);
+    boolean potentialNumericTypeLiteral = c == 'i' || c == 'u' || c == 'f';
     while (myOffset < myEndOffset) {
       c = myBuffer.charAt(myOffset);
       if (!isValid(validWordMiddle, c)) {
         break;
       }
       hash = hashChar(hash, c);
+      potentialNumericTypeLiteral &= isValid(validDec, c);
       myOffset++;
     }
-    myToken = getKeyword(hash, myTokenStart, myOffset);
+    myToken = potentialNumericTypeLiteral ? getNumericTypeLiteral(myTokenStart, myOffset) : null;
+    if (myToken == null) {
+      myToken = getKeyword(hash, myTokenStart, myOffset);
+    }
     if (myToken == null) {
       myToken = CbToken.IDENTIFIER;
     }
     myTokenEnd = myOffset;
     return true;
+  }
+
+  // should be called if the token matches [iuf][0-9]*
+  private @Nullable CbToken getNumericTypeLiteral(int tokenStart, int tokenEnd) {
+    if (tokenStart + 1 == tokenEnd) {
+      // no digits after [iuf]
+      return null;
+    }
+    if (myBuffer.charAt(tokenStart + 1) == '0') {
+      return null;
+    }
+    int n = 0;
+    for (int i = tokenStart + 1; i < tokenEnd; i++) {
+      n = n * 10 + (myBuffer.charAt(i) - '0');
+      if (n < 0) {
+        return null;
+      }
+    }
+    return (n & 0b111) == 0 ? CbToken.NUMERIC_TYPE_LITERAL : null;
   }
 
   @Override

@@ -118,6 +118,8 @@ class CbToken(val name: String) : IElementType(name, CbLanguage) {
     @JvmField val WHERE = CbToken("where")
     @JvmField val WHILE = CbToken("while")
 
+    @JvmField val NUMERIC_TYPE_LITERAL = CbToken("numeric_type_literal")
+
     @JvmField
     val keywords = arrayOf<CbToken>(
       ABSTRACT, ADAPT, ADDR, ALIAS, AND, AS, AUTO, BASE, BREAK, CORE, CASE, CHOICE, CLASS, CONSTRAINT, CONTINUE, DEFAULT,
