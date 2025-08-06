@@ -347,6 +347,10 @@ public class CbLexer extends LexerBase {
     myOffset++;
     long hash = hashChar(initialHash, c);
     boolean potentialNumericTypeLiteral = c == 'i' || c == 'u' || c == 'f';
+    boolean raw = c == 'r' && myOffset < myEndOffset && myBuffer.charAt(myOffset) == '#';
+    if (raw) {
+      myOffset++;
+    }
     while (myOffset < myEndOffset) {
       c = myBuffer.charAt(myOffset);
       if (!isValid(validWordMiddle, c)) {
@@ -361,7 +365,7 @@ public class CbLexer extends LexerBase {
       myToken = getKeyword(hash, myTokenStart, myOffset);
     }
     if (myToken == null) {
-      myToken = CbToken.IDENTIFIER;
+      myToken = raw ? CbToken.RAW_IDENTIFIER : CbToken.IDENTIFIER;
     }
     myTokenEnd = myOffset;
     return true;

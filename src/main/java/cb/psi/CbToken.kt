@@ -61,6 +61,8 @@ class CbToken(val name: String) : IElementType(name, CbLanguage) {
     @JvmField val CLOSE_BRACE = CbToken("CLOSE_BRACE")
 
     @JvmField val IDENTIFIER = CbToken("IDENTIFIER")
+    @JvmField val RAW_IDENTIFIER = CbToken("RAW_IDENTIFIER")
+
     @JvmField val ABSTRACT = CbToken("abstract")
     @JvmField val ADAPT = CbToken("adapt")
     @JvmField val ADDR = CbToken("addr")
