@@ -109,6 +109,7 @@ public class CbLexer extends LexerBase {
       case '-' -> readMinus();
       case '>' -> readGreater();
       case '<' -> readLess();
+      case '"' -> readString();
       default -> {
         if (!readWord()) {
           readToken(TokenType.BAD_CHARACTER);
@@ -389,6 +390,35 @@ public class CbLexer extends LexerBase {
     }
     return Integer.bitCount(n) == 1 && (n & 0b111) == 0 ? CbToken.NUMERIC_TYPE_LITERAL : null;
   }
+
+
+  private void readString() {
+    myTokenStart = myOffset;
+    myOffset++;
+    boolean escape = false;
+    while (myOffset < myEndOffset) {
+      char c = myBuffer.charAt(myOffset);
+      if (c == '\n') {
+        break;
+      }
+      if (escape) {
+        escape = false;
+      }
+      else {
+        if (c == '"') {
+          myOffset++;
+          break;
+        }
+        if (c == '\\') {
+          escape = true;
+        }
+      }
+      myOffset++;
+    }
+    myToken = CbToken.STRING;
+    myTokenEnd = myOffset;
+  }
+
 
   @Override
   public @Nullable IElementType getTokenType() {

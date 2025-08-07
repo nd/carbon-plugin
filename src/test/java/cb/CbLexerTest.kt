@@ -42,4 +42,8 @@ class CbLexerTest : LexerTestCase() {
   fun testWords() {
     doTest()
   }
+
+  fun testStrings() {
+    doTest()
+  }
 }
