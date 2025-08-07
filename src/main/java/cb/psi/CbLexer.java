@@ -387,7 +387,7 @@ public class CbLexer extends LexerBase {
         return null;
       }
     }
-    return (n & 0b111) == 0 ? CbToken.NUMERIC_TYPE_LITERAL : null;
+    return Integer.bitCount(n) == 1 && (n & 0b111) == 0 ? CbToken.NUMERIC_TYPE_LITERAL : null;
   }
 
   @Override
