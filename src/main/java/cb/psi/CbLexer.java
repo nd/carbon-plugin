@@ -110,6 +110,7 @@ public class CbLexer extends LexerBase {
       case '>' -> readGreater();
       case '<' -> readLess();
       case '"' -> readString();
+      case '#' -> readRawString();
       default -> {
         if (!readWord()) {
           readToken(TokenType.BAD_CHARACTER);
@@ -417,6 +418,66 @@ public class CbLexer extends LexerBase {
     }
     myToken = CbToken.STRING;
     myTokenEnd = myOffset;
+  }
+
+
+  private void readRawString() {
+    myTokenStart = myOffset;
+    do {
+      myOffset++;
+    } while (myOffset < myEndOffset && myBuffer.charAt(myOffset) == '#');
+    final int openingHashCount = myOffset - myTokenStart;
+    if (myOffset == myEndOffset || myBuffer.charAt(myOffset) != '"') {
+      // wrong raw string
+      myToken = CbToken.RAW_STRING;
+      myTokenEnd = myOffset;
+      return;
+    }
+
+    myOffset++;
+    boolean escape = false;
+    while (myOffset < myEndOffset) {
+      char c = myBuffer.charAt(myOffset);
+      if (c == '\n') {
+        break;
+      }
+      if (escape) {
+        escape = false;
+      }
+      else {
+        if (c == '"') {
+          myOffset++;
+          if (readHashes(openingHashCount)) {
+            myOffset += openingHashCount;
+            break;
+          }
+        }
+        if (c == '\\') {
+          myOffset++;
+          if (readHashes(openingHashCount)) {
+            myOffset += openingHashCount;
+            escape = true;
+          }
+        }
+      }
+      myOffset++;
+    }
+    myToken = CbToken.RAW_STRING;
+    myTokenEnd = myOffset;
+  }
+
+
+  private boolean readHashes(int hashCount) {
+    int offset = myOffset;
+    int i = 0;
+    while (offset < myEndOffset && i < hashCount) {
+      if (myBuffer.charAt(offset) != '#') {
+        return false;
+      }
+      offset++;
+      i++;
+    }
+    return true;
   }
 
 
