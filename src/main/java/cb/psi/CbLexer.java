@@ -109,8 +109,9 @@ public class CbLexer extends LexerBase {
       case '-' -> readMinus();
       case '>' -> readGreater();
       case '<' -> readLess();
-      case '"' -> readString();
+      case '"' -> readString(myOffset, 0);
       case '#' -> readRawString();
+      case '\''-> readBlockString(myOffset, 0);
       default -> {
         if (!readWord()) {
           readToken(TokenType.BAD_CHARACTER);
@@ -393,8 +394,10 @@ public class CbLexer extends LexerBase {
   }
 
 
-  private void readString() {
-    myTokenStart = myOffset;
+  private void readString(int startOffset, int openingHashCount) {
+    assert(myBuffer.charAt(myOffset) == '"');
+
+    myTokenStart = startOffset;
     myOffset++;
     boolean escape = false;
     while (myOffset < myEndOffset) {
@@ -407,68 +410,49 @@ public class CbLexer extends LexerBase {
       }
       else {
         if (c == '"') {
-          myOffset++;
-          break;
-        }
-        if (c == '\\') {
-          escape = true;
-        }
-      }
-      myOffset++;
-    }
-    myToken = CbToken.STRING;
-    myTokenEnd = myOffset;
-  }
-
-
-  private void readRawString() {
-    myTokenStart = myOffset;
-    do {
-      myOffset++;
-    } while (myOffset < myEndOffset && myBuffer.charAt(myOffset) == '#');
-    final int openingHashCount = myOffset - myTokenStart;
-    if (myOffset == myEndOffset || myBuffer.charAt(myOffset) != '"') {
-      // wrong raw string
-      myToken = CbToken.RAW_STRING;
-      myTokenEnd = myOffset;
-      return;
-    }
-
-    myOffset++;
-    boolean escape = false;
-    while (myOffset < myEndOffset) {
-      char c = myBuffer.charAt(myOffset);
-      if (c == '\n') {
-        break;
-      }
-      if (escape) {
-        escape = false;
-      }
-      else {
-        if (c == '"') {
-          myOffset++;
-          if (readHashes(openingHashCount)) {
-            myOffset += openingHashCount;
+          if (readHashes(myOffset + 1, openingHashCount)) {
+            myOffset = myOffset + 1 + openingHashCount;
             break;
           }
         }
         if (c == '\\') {
-          myOffset++;
-          if (readHashes(openingHashCount)) {
-            myOffset += openingHashCount;
+          if (readHashes(myOffset + 1, openingHashCount)) {
+            myOffset = myOffset + openingHashCount; // +1 in the end of the loop
             escape = true;
           }
         }
       }
       myOffset++;
     }
-    myToken = CbToken.RAW_STRING;
+    myToken = openingHashCount > 0 ? CbToken.RAW_STRING : CbToken.STRING;
     myTokenEnd = myOffset;
   }
 
 
-  private boolean readHashes(int hashCount) {
-    int offset = myOffset;
+  private void readRawString() {
+    int tokenStart = myOffset;
+    do {
+      myOffset++;
+    } while (myOffset < myEndOffset && myBuffer.charAt(myOffset) == '#');
+    final int openingHashCount = myOffset - tokenStart;
+
+    if (myOffset == myEndOffset || myBuffer.charAt(myOffset) != '"' && myBuffer.charAt(myOffset) != '\'') {
+      // wrong raw string
+      myTokenStart = tokenStart;
+      myToken = CbToken.RAW_STRING;
+      myTokenEnd = myOffset;
+      return;
+    }
+
+    if (myBuffer.charAt(myOffset) == '\'') {
+      readBlockString(tokenStart, openingHashCount);
+    } else {
+      readString(tokenStart, openingHashCount);
+    }
+  }
+
+
+  private boolean readHashes(int offset, int hashCount) {
     int i = 0;
     while (offset < myEndOffset && i < hashCount) {
       if (myBuffer.charAt(offset) != '#') {
@@ -480,6 +464,60 @@ public class CbLexer extends LexerBase {
     return true;
   }
 
+
+  private void readBlockString(int startOffset, int openingHashCount) {
+    // startOffset != myOffset in case of raw block strings
+    assert(myBuffer.charAt(myOffset) == '\'');
+
+    myTokenStart = startOffset;
+    myToken = openingHashCount > 0 ? CbToken.RAW_BLOCK_STRING : CbToken.BLOCK_STRING;
+    myOffset++;
+
+    if (myOffset == myEndOffset || myBuffer.charAt(myOffset) != '\'') {
+      // '[^']
+      myTokenEnd = myOffset;
+      return;
+    }
+    myOffset++;
+
+    if (myOffset == myEndOffset || myBuffer.charAt(myOffset) != '\'') {
+      // ''[^']
+      myTokenEnd = myOffset;
+      return;
+    }
+    myOffset++;
+
+    boolean escape = false;
+    while (myOffset < myEndOffset) {
+      char c = myBuffer.charAt(myOffset);
+      if (escape) {
+        escape = false;
+      }
+      else {
+        if (c == '\'' && readTwoQuotes()) {
+          if (readHashes(myOffset + 3, openingHashCount)) {
+            myOffset = myOffset + 3 + openingHashCount;
+            break;
+          }
+        }
+        if (c == '\\') {
+          if (readHashes(myOffset + 1, openingHashCount)) {
+            myOffset = myOffset + openingHashCount; // + 1 in the end of the loop
+            escape = true;
+          }
+        }
+      }
+      myOffset++;
+    }
+    myTokenEnd = myOffset;
+  }
+
+
+  private boolean readTwoQuotes() {
+    return myOffset + 2 < myEndOffset &&
+            myBuffer.charAt(myOffset + 1) == '\'' &&
+            myBuffer.charAt(myOffset + 2) == '\'';
+  }
 
   @Override
   public @Nullable IElementType getTokenType() {
