@@ -2,6 +2,7 @@ package cb.psi
 
 import cb.CbLanguage
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.tree.TokenSet
 
 class CbToken(val name: String) : IElementType(name, CbLanguage) {
   companion object {
@@ -141,5 +142,9 @@ class CbToken(val name: String) : IElementType(name, CbLanguage) {
       PIPE_EQ, PLUS_EQ, PLUS_PLUS, SLASH_EQ, STAR_EQ, TILDE_EQ, AMP, CARET, COLON, EQ, EXCL, GREATER, LESS, MINUS,
       PERCENT, PIPE, PLUS, QUESTION, SLASH, STAR, TILDE
     )
+
+    val WHITESPACES = TokenSet.create(WHITESPACE, NEWLINE)
+    val STRINGS = TokenSet.create(STRING, RAW_STRING, BLOCK_STRING, RAW_BLOCK_STRING)
+    val COMMENTS = TokenSet.create(COMMENT)
   }
 }

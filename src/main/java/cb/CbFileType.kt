@@ -3,12 +3,12 @@ package cb
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.util.NlsContexts
-import com.intellij.openapi.util.NlsSafe
 import org.jetbrains.annotations.NonNls
 import javax.swing.Icon
 
 class CbFileType : LanguageFileType(CbLanguage) {
 
+  @Suppress("CompanionObjectInExtension")
   companion object {
     @JvmField
     val INSTANCE: CbFileType = CbFileType()
@@ -22,7 +22,7 @@ class CbFileType : LanguageFileType(CbLanguage) {
     return "Carbon"
   }
 
-  override fun getDefaultExtension(): @NlsSafe String {
+  override fun getDefaultExtension(): String {
     return "carbon"
   }
 

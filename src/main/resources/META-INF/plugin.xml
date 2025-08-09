@@ -31,5 +31,7 @@
                 extensions="carbon"/>
 
         <lang.syntaxHighlighter language="Carbon" implementationClass="cb.CbSyntaxHighlighter"/>
+
+        <lang.parserDefinition language="Carbon" implementationClass="cb.psi.CbParserDefinition"/>
     </extensions>
 </idea-plugin>
