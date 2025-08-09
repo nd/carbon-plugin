@@ -49,7 +49,7 @@ public class CbLexer extends LexerBase {
       validWordMiddle[i] = true;
     }
 
-    for (CbToken keyword : CbToken.keywords) {
+    for (CbToken keyword : CbToken.KEYWORDS) {
       hashKeyword(keyword);
     }
   }

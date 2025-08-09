@@ -29,5 +29,7 @@
                 fieldName="INSTANCE"
                 language="Carbon"
                 extensions="carbon"/>
+
+        <lang.syntaxHighlighter language="Carbon" implementationClass="cb.CbSyntaxHighlighter"/>
     </extensions>
 </idea-plugin>
