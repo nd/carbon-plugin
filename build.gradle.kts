@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "cb"
-version = "0"
+version = "0.1"
 
 repositories {
     mavenCentral()
@@ -35,7 +35,7 @@ intellijPlatform {
         }
 
         changeNotes = """
-            Adds a file type for .carbon files
+            Adds a basic syntax highlighting
         """.trimIndent()
     }
 }
