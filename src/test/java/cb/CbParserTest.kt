@@ -21,4 +21,8 @@ class CbParserTest : ParsingTestCase("parser", "carbon", CbParserDefinition()) {
   fun testLibrary() {
     doTest()
   }
+
+  fun testPackage() {
+    doTest()
+  }
 }

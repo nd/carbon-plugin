@@ -11,5 +11,6 @@ class CbAstNodeType(name: String) : IElementType(name, CbLanguage) {
     @JvmField val LIBRARY_DECLARATION = CbAstNodeType("LIBRARY_DECLARATION")
     @JvmField val IMPL_LIBRARY_DECLARATION = CbAstNodeType("IMPL_LIBRARY_DECLARATION")
     @JvmField val PACKAGE_DECLARATION = CbAstNodeType("PACKAGE_DECLARATION")
+    @JvmField val IMPL_PACKAGE_DECLARATION = CbAstNodeType("IMPL_PACKAGE_DECLARATION")
   }
 }
