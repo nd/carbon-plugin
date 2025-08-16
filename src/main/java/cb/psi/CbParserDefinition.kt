@@ -10,7 +10,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.tree.IFileElementType
 import com.intellij.psi.tree.TokenSet
-import com.intellij.psi.util.PsiUtilCore
 
 class CbParserDefinition : ParserDefinition {
 
@@ -23,7 +22,7 @@ class CbParserDefinition : ParserDefinition {
   }
 
   override fun getFileNodeType(): IFileElementType {
-    return CbNodeType.FILE
+    return CbAstNodeType.FILE
   }
 
   override fun getCommentTokens(): TokenSet {
@@ -39,7 +38,7 @@ class CbParserDefinition : ParserDefinition {
   }
 
   override fun createElement(node: ASTNode): PsiElement {
-    return PsiUtilCore.NULL_PSI_ELEMENT
+    return CbPsiElement(node)
   }
 
   override fun createFile(viewProvider: FileViewProvider): PsiFile {

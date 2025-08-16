@@ -1,0 +1,78 @@
+FILE
+  CbPsiElement(LIBRARY_DECLARATION)
+    PsiElement(library)('library')
+    PsiErrorElement:Library name expected
+      <empty list>
+    PsiElement(SEMI)(';')
+  PsiWhiteSpace('\n')
+  CbPsiElement(LIBRARY_DECLARATION)
+    PsiElement(library)('library')
+    PsiWhiteSpace(' ')
+    PsiElement(STRING)('"Geometry"')
+    PsiElement(SEMI)(';')
+  PsiWhiteSpace('\n')
+  CbPsiElement(LIBRARY_DECLARATION)
+    PsiElement(library)('library')
+    PsiErrorElement:Library name expected
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Geometry')
+    PsiElement(SEMI)(';')
+  PsiWhiteSpace('\n')
+  PsiWhiteSpace('\n')
+  CbPsiElement(LIBRARY_DECLARATION)
+    PsiElement(library)('library')
+    PsiWhiteSpace('\n')
+    PsiWhiteSpace('  ')
+    PsiElement(STRING)('"Geometry"')
+    PsiWhiteSpace('\n')
+    PsiWhiteSpace('    ')
+    PsiElement(SEMI)(';')
+  PsiWhiteSpace('\n')
+  PsiWhiteSpace('\n')
+  CbPsiElement(IMPL_LIBRARY_DECLARATION)
+    PsiElement(impl)('impl')
+    PsiWhiteSpace(' ')
+    PsiElement(library)('library')
+    PsiErrorElement:Library name expected
+      <empty list>
+    PsiElement(SEMI)(';')
+  PsiWhiteSpace('\n')
+  CbPsiElement(IMPL_LIBRARY_DECLARATION)
+    PsiElement(impl)('impl')
+    PsiWhiteSpace(' ')
+    PsiElement(library)('library')
+    PsiWhiteSpace(' ')
+    PsiElement(STRING)('"Geometry"')
+    PsiElement(SEMI)(';')
+  PsiWhiteSpace('\n')
+  CbPsiElement(IMPL_LIBRARY_DECLARATION)
+    PsiElement(impl)('impl')
+    PsiWhiteSpace(' ')
+    PsiElement(library)('library')
+    PsiErrorElement:Library name expected
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Geometry')
+    PsiElement(SEMI)(';')
+  PsiWhiteSpace('\n')
+  PsiWhiteSpace('\n')
+  CbPsiElement(LIBRARY_DECLARATION)
+    PsiElement(library)('library')
+    PsiErrorElement:Library name expected
+      <empty list>
+  PsiWhiteSpace('\n')
+  CbPsiElement(LIBRARY_DECLARATION)
+    PsiElement(library)('library')
+    PsiErrorElement:Library name expected
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Geometry')
+  PsiWhiteSpace('\n')
+  CbPsiElement(LIBRARY_DECLARATION)
+    PsiElement(library)('library')
+    PsiErrorElement:Library name expected
+      <empty list>
+    PsiWhiteSpace('\n')
+    PsiWhiteSpace('   ')
+    PsiElement(SEMI)(';')
