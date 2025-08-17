@@ -1,0 +1,1 @@
+<warning descr="Package implementation should be in .impl.carbon file">impl</warning> package Geometry;

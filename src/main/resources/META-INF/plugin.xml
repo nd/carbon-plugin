@@ -33,5 +33,7 @@
         <lang.syntaxHighlighter language="Carbon" implementationClass="cb.CbSyntaxHighlighter"/>
 
         <lang.parserDefinition language="Carbon" implementationClass="cb.psi.CbParserDefinition"/>
+
+        <annotator language="Carbon" implementationClass="cb.analysis.CbAnnotator"/>
     </extensions>
 </idea-plugin>

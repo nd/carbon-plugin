@@ -1,0 +1,1 @@
+<warning descr="Library implementation should be in .impl.carbon file">impl</warning> library "Colors";
