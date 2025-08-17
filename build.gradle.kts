@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "cb"
-version = "0.1"
+version = "0.2"
 
 repositories {
     mavenCentral()
@@ -35,7 +35,11 @@ intellijPlatform {
         }
 
         changeNotes = """
-            Adds a basic syntax highlighting
+            Plugin now parses package and library declarations and reports errors:
+            <ul>
+              <li>repeated package/library declarations in the same file</li>
+              <li>api package/library in impl file and vice versa</li>
+            </ul>
         """.trimIndent()
     }
 }
