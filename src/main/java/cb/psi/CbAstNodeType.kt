@@ -12,6 +12,7 @@ class CbAstNodeType(name: String, val id: Int) : IElementType(name, CbLanguage) 
     @JvmField val IMPL_LIBRARY_DECLARATION = CbAstNodeType("IMPL_LIBRARY_DECLARATION", CbAstNodeTypeId.IMPL_LIBRARY_DECLARATION_ID)
     @JvmField val PACKAGE_DECLARATION = CbAstNodeType("PACKAGE_DECLARATION", CbAstNodeTypeId.PACKAGE_DECLARATION_ID)
     @JvmField val IMPL_PACKAGE_DECLARATION = CbAstNodeType("IMPL_PACKAGE_DECLARATION", CbAstNodeTypeId.IMPL_PACKAGE_DECLARATION_ID)
+    @JvmField val IMPORT = CbAstNodeType("IMPORT", CbAstNodeTypeId.IMPORT_ID)
   }
 }
 
@@ -21,5 +22,6 @@ class CbAstNodeTypeId {
     const val IMPL_LIBRARY_DECLARATION_ID = 2
     const val PACKAGE_DECLARATION_ID = 3
     const val IMPL_PACKAGE_DECLARATION_ID = 4
+    const val IMPORT_ID = 5
   }
 }

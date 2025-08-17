@@ -24,6 +24,7 @@ public class CbParser implements PsiParser, WhitespaceSkippedCallback {
           case CbTokenId.LIBRARY -> parseLibrary(b, false);
           case CbTokenId.PACKAGE -> parsePackage(b, false);
           case CbTokenId.IMPL -> parseImpl(b);
+          case CbTokenId.IMPORT -> parseImport(b);
           default -> b.advanceLexer();
         }
       }
@@ -89,6 +90,19 @@ public class CbParser implements PsiParser, WhitespaceSkippedCallback {
       }
     }
     m.done(isImpl ? CbAstNodeType.IMPL_PACKAGE_DECLARATION : CbAstNodeType.PACKAGE_DECLARATION);
+  }
+
+
+  private void parseImport(@NotNull PsiBuilder b) {
+    PsiBuilder.Marker m = b.mark();
+    IElementType t;
+    while ((t = b.getTokenType()) != null) {
+      if (t == CbToken.SEMI) {
+        break;
+      }
+      b.advanceLexer();
+    }
+    m.done(CbAstNodeType.IMPORT);
   }
 
 
