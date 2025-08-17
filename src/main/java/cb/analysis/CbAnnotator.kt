@@ -23,13 +23,7 @@ class CbAnnotator : Annotator {
 
 
   private fun annotatePackage(element: CbPackageDeclaration, holder: AnnotationHolder) {
-    val session = holder.currentAnnotationSession
-    val existing = session.getUserData(FIRST_PACKAGE_OR_LIBRARY)
-    if (existing != null) {
-      reportAlreadyDefinedLibraryOrPackage(element, existing, holder)
-    } else {
-      session.putUserData(FIRST_PACKAGE_OR_LIBRARY, element)
-    }
+    saveFirstPackageOrLibrary(element, holder)
 
     val fileName = element.containingFile.virtualFile?.name ?: return
     val isImplFile = fileName.endsWith(".impl.carbon")
@@ -51,13 +45,7 @@ class CbAnnotator : Annotator {
 
 
   private fun annotateLibrary(element: CbLibraryDeclaration, holder: AnnotationHolder) {
-    val session = holder.currentAnnotationSession
-    val existing = session.getUserData(FIRST_PACKAGE_OR_LIBRARY)
-    if (existing != null) {
-      reportAlreadyDefinedLibraryOrPackage(element, existing, holder)
-    } else {
-      session.putUserData(FIRST_PACKAGE_OR_LIBRARY, element)
-    }
+    saveFirstPackageOrLibrary(element, holder)
 
     val fileName = element.containingFile.virtualFile?.name ?: return
     val isImplFile = fileName.endsWith(".impl.carbon")
@@ -74,6 +62,17 @@ class CbAnnotator : Annotator {
         .newAnnotation(HighlightSeverity.WARNING, CbBundle.message("annotator.library.api.should.be.in.api.file"))
         .range(library.textRange)
         .create()
+    }
+  }
+
+
+  private fun saveFirstPackageOrLibrary(element: PsiElement, holder: AnnotationHolder) {
+    val session = holder.currentAnnotationSession
+    val existing = session.getUserData(FIRST_PACKAGE_OR_LIBRARY)
+    if (existing != null) {
+      reportAlreadyDefinedLibraryOrPackage(element, existing, holder)
+    } else {
+      session.putUserData(FIRST_PACKAGE_OR_LIBRARY, element)
     }
   }
 
