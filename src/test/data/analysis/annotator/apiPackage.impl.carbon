@@ -1,0 +1,1 @@
+<warning descr="Package API should be defined in API file">package</warning> Geometry;

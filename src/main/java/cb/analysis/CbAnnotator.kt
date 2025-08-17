@@ -31,15 +31,21 @@ class CbAnnotator : Annotator {
       session.putUserData(FIRST_PACKAGE_OR_LIBRARY, element)
     }
 
-    if (element.isImpl()) {
-      val fileName = element.containingFile.virtualFile?.name
-      if (fileName != null && !fileName.endsWith(".impl.carbon")) {
-        val impl = PsiTreeUtil.firstChild(element)
-        holder
-          .newAnnotation(HighlightSeverity.WARNING, CbBundle.message("annotator.package.impl.should.be.in.impl.carbon"))
-          .range(impl.textRange)
-          .create()
-      }
+    val fileName = element.containingFile.virtualFile?.name ?: return
+    val isImplFile = fileName.endsWith(".impl.carbon")
+    if (element.isImpl() && !isImplFile) {
+      val impl = PsiTreeUtil.firstChild(element)
+      holder
+        .newAnnotation(HighlightSeverity.WARNING, CbBundle.message("annotator.package.impl.should.be.in.impl.carbon"))
+        .range(impl.textRange)
+        .create()
+    }
+    else if (!element.isImpl() && isImplFile) {
+      val pkg = PsiTreeUtil.firstChild(element)
+      holder
+        .newAnnotation(HighlightSeverity.WARNING, CbBundle.message("annotator.package.api.should.be.in.api.file"))
+        .range(pkg.textRange)
+        .create()
     }
   }
 
@@ -53,15 +59,21 @@ class CbAnnotator : Annotator {
       session.putUserData(FIRST_PACKAGE_OR_LIBRARY, element)
     }
 
-    if (element.isImpl()) {
-      val fileName = element.containingFile.virtualFile?.name
-      if (fileName != null && !fileName.endsWith(".impl.carbon")) {
-        val impl = PsiTreeUtil.firstChild(element)
-        holder
-          .newAnnotation(HighlightSeverity.WARNING, CbBundle.message("annotator.library.impl.should.be.in.impl.carbon"))
-          .range(impl.textRange)
-          .create()
-      }
+    val fileName = element.containingFile.virtualFile?.name ?: return
+    val isImplFile = fileName.endsWith(".impl.carbon")
+    if (element.isImpl() && !isImplFile) {
+      val impl = PsiTreeUtil.firstChild(element)
+      holder
+        .newAnnotation(HighlightSeverity.WARNING, CbBundle.message("annotator.library.impl.should.be.in.impl.carbon"))
+        .range(impl.textRange)
+        .create()
+    }
+    else if (!element.isImpl() && isImplFile) {
+      val library = PsiTreeUtil.firstChild(element)
+      holder
+        .newAnnotation(HighlightSeverity.WARNING, CbBundle.message("annotator.library.api.should.be.in.api.file"))
+        .range(library.textRange)
+        .create()
     }
   }
 

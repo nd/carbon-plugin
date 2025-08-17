@@ -1,0 +1,1 @@
+<warning descr="Library API should be defined in API file">library</warning> "Colors";

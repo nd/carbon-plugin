@@ -9,9 +9,9 @@ class CbAnnotatorTest : BasePlatformTestCase() {
     return Path.of("src/test/data/analysis/annotator").toAbsolutePath().toString()
   }
 
-  fun doTest() {
+  fun doTest(fileName: String? = null) {
     val testName = getTestName(true)
-    myFixture.configureByFile("$testName.carbon")
+    myFixture.configureByFile(fileName ?: "$testName.carbon")
     myFixture.checkHighlighting()
   }
 
@@ -29,5 +29,13 @@ class CbAnnotatorTest : BasePlatformTestCase() {
 
   fun testDoubleLibrary() {
     doTest()
+  }
+
+  fun testApiPackageInImplFile() {
+    doTest("apiPackage.impl.carbon")
+  }
+
+  fun testApiLibraryInImplFile() {
+    doTest("apiLibrary.impl.carbon")
   }
 }
