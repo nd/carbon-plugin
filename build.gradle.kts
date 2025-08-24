@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "cb"
-version = "0.2"
+version = "0.3"
 
 repositories {
     mavenCentral()
@@ -35,11 +35,7 @@ intellijPlatform {
         }
 
         changeNotes = """
-            Plugin now parses package and library declarations and reports errors:
-            <ul>
-              <li>repeated package/library declarations in the same file</li>
-              <li>api package/library in impl file and vice versa</li>
-            </ul>
+            Plugin now parses imports and reports an attempt to export a package.
         """.trimIndent()
     }
 }
