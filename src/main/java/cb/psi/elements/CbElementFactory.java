@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
+import static cb.psi.CbAstNodeTypeId.IMPORT_ID;
 import static cb.psi.CbAstNodeTypeId.PACKAGE_DECLARATION_ID;
 
 public class CbElementFactory {
@@ -22,6 +23,7 @@ public class CbElementFactory {
     int nodeId = cbNodeType != null ? cbNodeType.getId() : 0;
     return switch (nodeId) {
       case PACKAGE_DECLARATION_ID -> new CbPackage(node);
+      case IMPORT_ID -> new CbImport(node);
       default -> new CbPsiElement(node);
     };
   }

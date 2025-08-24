@@ -76,14 +76,43 @@ public class CbParser implements PsiParser, WhitespaceSkippedCallback {
 
 
   private void parseImport(@NotNull PsiBuilder b) {
+    assert(b.getTokenType() == CbToken.IMPORT);
+
+    int line = myLine;
     PsiBuilder.Marker m = b.mark();
-    IElementType t;
-    while ((t = b.getTokenType()) != null) {
-      if (t == CbToken.SEMI) {
-        break;
-      }
+    b.advanceLexer();
+    boolean hasPackage = false;
+    boolean recover = false;
+    IElementType afterImport = b.getTokenType();
+    if (afterImport == CbToken.IDENTIFIER) {
       b.advanceLexer();
+      hasPackage = true;
+    } else if (afterImport == CbToken.CORE) {
+      b.advanceLexer();
+      hasPackage = true;
     }
+
+    if (b.getTokenType() == CbToken.LIBRARY) {
+      b.advanceLexer();
+      if (b.getTokenType() == CbToken.STRING) {
+        b.advanceLexer();
+      } else if (b.getTokenType() == CbToken.DEFAULT) {
+        b.advanceLexer();
+      } else {
+        b.error("Library name expected");
+        recover = true;
+      }
+    } else if (!hasPackage) {
+      b.error("Package or library expected");
+      recover = true;
+    }
+
+    if (recover) {
+      recoverUntilSemiOrNewline(b, line);
+    } else {
+      consume(b, CbToken.SEMI, "Missing semicolon");
+    }
+
     m.done(CbAstNodeType.IMPORT);
   }
 
