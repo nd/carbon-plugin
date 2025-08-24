@@ -38,4 +38,8 @@ class CbAnnotatorTest : BasePlatformTestCase() {
   fun testApiLibraryInImplFile() {
     doTest("apiLibrary.impl.carbon")
   }
+
+  fun testExport() {
+    doTest()
+  }
 }

@@ -1,6 +1,7 @@
 package cb.analysis
 
 import cb.CbBundle
+import cb.psi.elements.CbImport
 import cb.psi.elements.CbPackage
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
@@ -16,6 +17,7 @@ class CbAnnotator : Annotator {
   override fun annotate(element: PsiElement, holder: AnnotationHolder) {
     when (element) {
       is CbPackage -> annotatePackage(element, holder)
+      is CbImport -> annotateImport(element, holder)
     }
   }
 
@@ -82,5 +84,16 @@ class CbAnnotator : Annotator {
       .newAnnotation(HighlightSeverity.ERROR, error)
       .range(elementToReport.textRange)
       .create()
+  }
+
+
+  private fun annotateImport(element: CbImport, holder: AnnotationHolder) {
+    val export = element.getExport()
+    if (export != null && element.getPackageIdentifier() != null) {
+      holder
+        .newAnnotation(HighlightSeverity.ERROR, CbBundle.message("annotator.names.in.other.packages.cannot.be.exported"))
+        .range(export.textRange)
+        .create()
+    }
   }
 }
