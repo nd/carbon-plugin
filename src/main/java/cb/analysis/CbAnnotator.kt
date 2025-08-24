@@ -1,8 +1,7 @@
 package cb.analysis
 
 import cb.CbBundle
-import cb.psi.elements.CbLibraryDeclaration
-import cb.psi.elements.CbPackageDeclaration
+import cb.psi.elements.CbPackage
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
@@ -11,75 +10,61 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.startOffset
 
-val FIRST_PACKAGE_OR_LIBRARY = Key<PsiElement>("cb.PackageOrLibrary")
+val FIRST_PACKAGE_OR_LIBRARY = Key<CbPackage>("cb.PackageOrLibrary")
 
 class CbAnnotator : Annotator {
   override fun annotate(element: PsiElement, holder: AnnotationHolder) {
     when (element) {
-      is CbPackageDeclaration -> annotatePackage(element, holder)
-      is CbLibraryDeclaration -> annotateLibrary(element, holder)
+      is CbPackage -> annotatePackage(element, holder)
     }
   }
 
 
-  private fun annotatePackage(element: CbPackageDeclaration, holder: AnnotationHolder) {
-    saveFirstPackageOrLibrary(element, holder)
+  private fun annotatePackage(element: CbPackage, holder: AnnotationHolder) {
+    saveFirstPackage(element, holder)
 
     val fileName = element.containingFile.virtualFile?.name ?: return
     val isImplFile = fileName.endsWith(".impl.carbon")
     if (element.isImpl() && !isImplFile) {
+      val message = if (element.hasPackage()) {
+        CbBundle.message("annotator.package.impl.should.be.in.impl.carbon")
+      } else {
+        CbBundle.message("annotator.library.impl.should.be.in.impl.carbon")
+      }
       val impl = PsiTreeUtil.firstChild(element)
       holder
-        .newAnnotation(HighlightSeverity.WARNING, CbBundle.message("annotator.package.impl.should.be.in.impl.carbon"))
+        .newAnnotation(HighlightSeverity.WARNING, message)
         .range(impl.textRange)
         .create()
-    }
-    else if (!element.isImpl() && isImplFile) {
+    } else if (!element.isImpl() && isImplFile) {
+      val message = if (element.hasPackage()) {
+        CbBundle.message("annotator.package.api.should.be.in.api.file")
+      } else {
+        CbBundle.message("annotator.library.api.should.be.in.api.file")
+      }
       val pkg = PsiTreeUtil.firstChild(element)
       holder
-        .newAnnotation(HighlightSeverity.WARNING, CbBundle.message("annotator.package.api.should.be.in.api.file"))
+        .newAnnotation(HighlightSeverity.WARNING, message)
         .range(pkg.textRange)
         .create()
     }
   }
 
 
-  private fun annotateLibrary(element: CbLibraryDeclaration, holder: AnnotationHolder) {
-    saveFirstPackageOrLibrary(element, holder)
-
-    val fileName = element.containingFile.virtualFile?.name ?: return
-    val isImplFile = fileName.endsWith(".impl.carbon")
-    if (element.isImpl() && !isImplFile) {
-      val impl = PsiTreeUtil.firstChild(element)
-      holder
-        .newAnnotation(HighlightSeverity.WARNING, CbBundle.message("annotator.library.impl.should.be.in.impl.carbon"))
-        .range(impl.textRange)
-        .create()
-    }
-    else if (!element.isImpl() && isImplFile) {
-      val library = PsiTreeUtil.firstChild(element)
-      holder
-        .newAnnotation(HighlightSeverity.WARNING, CbBundle.message("annotator.library.api.should.be.in.api.file"))
-        .range(library.textRange)
-        .create()
-    }
-  }
-
-
-  private fun saveFirstPackageOrLibrary(element: PsiElement, holder: AnnotationHolder) {
+  private fun saveFirstPackage(element: CbPackage, holder: AnnotationHolder) {
     val session = holder.currentAnnotationSession
     val existing = session.getUserData(FIRST_PACKAGE_OR_LIBRARY)
     if (existing != null) {
-      reportAlreadyDefinedLibraryOrPackage(element, existing, holder)
+      reportAlreadyDefinedPackage(element, existing, holder)
     } else {
       session.putUserData(FIRST_PACKAGE_OR_LIBRARY, element)
     }
   }
 
 
-  private fun reportAlreadyDefinedLibraryOrPackage(
-    newDeclaration: PsiElement,
-    existingDeclaration: PsiElement,
+  private fun reportAlreadyDefinedPackage(
+    newDeclaration: CbPackage,
+    existingDeclaration: CbPackage,
     holder: AnnotationHolder
   ) {
     val elementToReport = if (newDeclaration.startOffset > existingDeclaration.startOffset) {
@@ -88,10 +73,10 @@ class CbAnnotator : Annotator {
       holder.currentAnnotationSession.putUserData(FIRST_PACKAGE_OR_LIBRARY, newDeclaration)
       existingDeclaration
     }
-    val error = when (elementToReport) {
-      is CbPackageDeclaration -> CbBundle.message("annotator.package.already.declared")
-      is CbLibraryDeclaration -> CbBundle.message("annotator.library.already.declared")
-      else -> return
+    val error = if (elementToReport.hasPackage()) {
+      CbBundle.message("annotator.package.already.declared")
+    } else {
+      CbBundle.message("annotator.library.already.declared")
     }
     holder
       .newAnnotation(HighlightSeverity.ERROR, error)

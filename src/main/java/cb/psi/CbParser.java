@@ -21,8 +21,7 @@ public class CbParser implements PsiParser, WhitespaceSkippedCallback {
     while ((token = b.getTokenType()) != null) {
       if (token instanceof CbToken cbToken) {
         switch (cbToken.getId()) {
-          case CbTokenId.LIBRARY -> parseLibrary(b, false);
-          case CbTokenId.PACKAGE -> parsePackage(b, false);
+          case CbTokenId.LIBRARY, CbTokenId.PACKAGE -> parsePackage(b);
           case CbTokenId.IMPL -> parseImpl(b);
           case CbTokenId.IMPORT -> parseImport(b);
           default -> b.advanceLexer();
@@ -34,50 +33,23 @@ public class CbParser implements PsiParser, WhitespaceSkippedCallback {
   }
 
 
-  private void parseImpl(@NotNull PsiBuilder b) {
-    IElementType next = b.lookAhead(1);
-    int id = next instanceof CbToken cbToken ? cbToken.getId() : 0;
-    switch (id) {
-      case CbTokenId.LIBRARY -> parseLibrary(b, true);
-      case CbTokenId.PACKAGE -> parsePackage(b, true);
-      default -> b.advanceLexer();
-    }
-  }
-
-
-  private void parseLibrary(@NotNull PsiBuilder b, boolean isImpl) {
+  private void parsePackage(@NotNull PsiBuilder b) {
     int line = myLine;
     PsiBuilder.Marker m = b.mark();
-    if (isImpl) {
-      assert(b.getTokenType() == CbToken.IMPL);
+    if (b.getTokenType() == CbToken.IMPL) {
       b.advanceLexer();
     }
-    assert(b.getTokenType() == CbToken.LIBRARY);
-    b.advanceLexer();
 
-    if (!consume(b, CbToken.STRING, "Library name expected")) {
-      recoverUntilSemiOrNewline(b, line);
-    }
-    else {
-      consume(b, CbToken.SEMI, "Missing semicolon");
-    }
-    m.done(isImpl ? CbAstNodeType.IMPL_LIBRARY_DECLARATION : CbAstNodeType.LIBRARY_DECLARATION);
-  }
-
-
-  private void parsePackage(@NotNull PsiBuilder b, boolean isImpl) {
-    int line = myLine;
-    PsiBuilder.Marker m = b.mark();
-    if (isImpl) {
-      assert(b.getTokenType() == CbToken.IMPL);
+    boolean valid = true;
+    if (b.getTokenType() == CbToken.PACKAGE) {
       b.advanceLexer();
+      if (!consume(b, CbToken.IDENTIFIER, CbToken.CORE, "Package name expected")) {
+        recoverUntilSemiOrNewline(b, line);
+        valid = false;
+      }
     }
-    assert(b.getTokenType() == CbToken.PACKAGE);
-    b.advanceLexer();
 
-    if (!consume(b, CbToken.IDENTIFIER, CbToken.CORE, "Package name expected")) {
-      recoverUntilSemiOrNewline(b, line);
-    } else {
+    if (valid) {
       if (consume(b, CbToken.LIBRARY)) {
         if (!consume(b, CbToken.STRING, "Library name expected")) {
           recoverUntilSemiOrNewline(b, line);
@@ -89,7 +61,17 @@ public class CbParser implements PsiParser, WhitespaceSkippedCallback {
         consume(b, CbToken.SEMI, "Missing semicolon");
       }
     }
-    m.done(isImpl ? CbAstNodeType.IMPL_PACKAGE_DECLARATION : CbAstNodeType.PACKAGE_DECLARATION);
+    m.done(CbAstNodeType.PACKAGE_DECLARATION);
+  }
+
+
+  private void parseImpl(@NotNull PsiBuilder b) {
+    IElementType next = b.lookAhead(1);
+    int id = next instanceof CbToken cbToken ? cbToken.getId() : 0;
+    switch (id) {
+      case CbTokenId.LIBRARY, CbTokenId.PACKAGE -> parsePackage(b);
+      default -> b.advanceLexer();
+    }
   }
 
 
