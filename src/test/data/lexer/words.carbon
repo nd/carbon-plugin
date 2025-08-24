@@ -22,6 +22,7 @@ destroy
 else
 export
 extend
+extern
 final
 fn
 for

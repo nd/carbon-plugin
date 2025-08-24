@@ -553,12 +553,12 @@ public class CbLexer extends LexerBase {
   private static int getKeywordIndex(long hash) {
     // This happens to produce a unique index for all keywords.
     // If keywords are changed this needs to be updated (hashKeyword will throw).
-    return (int) ((hash >> 4) & 0xff);
+    return (int) ((hash >> 3) & 0xff);
   }
 
   private static long hashChar(long hash, char c) {
     long result = hash ^ c;
-    result *= 104693;
+    result *= 105127;
     return result;
   }
 

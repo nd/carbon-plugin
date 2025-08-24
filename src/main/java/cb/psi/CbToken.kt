@@ -85,6 +85,7 @@ class CbToken(val name: String, val id: Int) : IElementType(name, CbLanguage) {
     @JvmField val ELSE = CbToken("else", CbTokenId.ELSE)
     @JvmField val EXPORT = CbToken("export", CbTokenId.EXPORT)
     @JvmField val EXTEND = CbToken("extend", CbTokenId.EXTEND)
+    @JvmField val EXTERN = CbToken("extern", CbTokenId.EXTERN)
     @JvmField val FINAL = CbToken("final", CbTokenId.FINAL)
     @JvmField val FN = CbToken("fn", CbTokenId.FN)
     @JvmField val FOR = CbToken("for", CbTokenId.FOR)
@@ -131,7 +132,7 @@ class CbToken(val name: String, val id: Int) : IElementType(name, CbLanguage) {
     @JvmField
     val KEYWORDS = arrayOf<CbToken>(
       ABSTRACT, ADAPT, ADDR, ALIAS, AND, AS, AUTO, BASE, BREAK, CORE, CASE, CHOICE, CLASS, CONSTRAINT, CONTINUE, DEFAULT,
-      DESTROY, ELSE, EXPORT, EXTEND, FINAL, FN, FOR, FORALL, FRIEND, IF, IMPL, IMPLS, IMPORT, IN, INTERFACE, LET, LIBRARY,
+      DESTROY, ELSE, EXPORT, EXTEND, EXTERN, FINAL, FN, FOR, FORALL, FRIEND, IF, IMPL, IMPLS, IMPORT, IN, INTERFACE, LET, LIBRARY,
       LIKE, MATCH, NAMESPACE, NOT, OBSERVE, OR, OVERRIDE, PACKAGE, PARTIAL, PRIVATE, PROTECTED, REQUIRE, RETURN, RETURNED,
       SELF, SELF_TYPE, TEMPLATE, THEN, TYPE, VAR, VIRTUAL, WHERE, WHILE,
     )
@@ -228,47 +229,48 @@ class CbTokenId {
     const val ELSE = 73
     const val EXPORT = 74
     const val EXTEND = 75
-    const val FINAL = 76
-    const val FN = 77
-    const val FOR = 78
-    const val FORALL = 79
-    const val FRIEND = 80
-    const val IF = 81
-    const val IMPL = 82
-    const val IMPLS = 83
-    const val IMPORT = 84
-    const val IN = 85
-    const val INTERFACE = 86
-    const val LET = 87
-    const val LIBRARY = 88
-    const val LIKE = 89
-    const val MATCH = 90
-    const val NAMESPACE = 91
-    const val NOT = 92
-    const val OBSERVE = 93
-    const val OR = 94
-    const val OVERRIDE = 95
-    const val PACKAGE = 96
-    const val PARTIAL = 97
-    const val PRIVATE = 98
-    const val PROTECTED = 99
-    const val REQUIRE = 100
-    const val RETURN = 101
-    const val RETURNED = 102
-    const val SELF = 103
-    const val SELF_TYPE = 104
-    const val TEMPLATE = 105
-    const val THEN = 106
-    const val TYPE = 107
-    const val VAR = 108
-    const val VIRTUAL = 109
-    const val WHERE = 110
-    const val WHILE = 111
-    const val NUMERIC_TYPE_LITERAL = 112
-    const val STRING = 113
-    const val RAW_STRING = 114
-    const val BLOCK_STRING = 115
-    const val RAW_BLOCK_STRING = 116
+    const val EXTERN = 76
+    const val FINAL = 77
+    const val FN = 78
+    const val FOR = 79
+    const val FORALL = 80
+    const val FRIEND = 81
+    const val IF = 82
+    const val IMPL = 83
+    const val IMPLS = 84
+    const val IMPORT = 85
+    const val IN = 86
+    const val INTERFACE = 87
+    const val LET = 88
+    const val LIBRARY = 89
+    const val LIKE = 90
+    const val MATCH = 91
+    const val NAMESPACE = 92
+    const val NOT = 93
+    const val OBSERVE = 94
+    const val OR = 95
+    const val OVERRIDE = 96
+    const val PACKAGE = 97
+    const val PARTIAL = 98
+    const val PRIVATE = 99
+    const val PROTECTED = 100
+    const val REQUIRE = 101
+    const val RETURN = 102
+    const val RETURNED = 103
+    const val SELF = 104
+    const val SELF_TYPE = 105
+    const val TEMPLATE = 106
+    const val THEN = 107
+    const val TYPE = 108
+    const val VAR = 109
+    const val VIRTUAL = 110
+    const val WHERE = 111
+    const val WHILE = 112
+    const val NUMERIC_TYPE_LITERAL = 113
+    const val STRING = 114
+    const val RAW_STRING = 115
+    const val BLOCK_STRING = 116
+    const val RAW_BLOCK_STRING = 117
   }
 }
 
